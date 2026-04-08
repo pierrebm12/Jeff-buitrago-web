@@ -29,8 +29,14 @@ app.use(
   }),
 );
 
+// In production, restrict CORS to the configured frontend origin.
+// CORS_ORIGIN can be a single URL or a comma-separated list.
+const corsOrigin = process.env.CORS_ORIGIN
+  ? process.env.CORS_ORIGIN.split(",").map((s) => s.trim())
+  : true;
+
 app.use(cors({
-  origin: true,
+  origin: corsOrigin,
   credentials: true,
 }));
 app.use(express.json());
