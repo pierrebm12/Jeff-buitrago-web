@@ -1,0 +1,501 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: API specification for Jeff Buitrago artist website
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: auth
+    description: Admin authentication
+  - name: shows
+    description: Show/event management
+  - name: photos
+    description: Photo gallery management
+  - name: videos
+    description: Video gallery management
+
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      description: Returns server health status
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  /auth/login:
+    post:
+      operationId: adminLogin
+      tags: [auth]
+      summary: Admin login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginBody"
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthStatus"
+        "401":
+          description: Invalid credentials
+
+  /auth/logout:
+    post:
+      operationId: adminLogout
+      tags: [auth]
+      summary: Admin logout
+      responses:
+        "200":
+          description: Logged out
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthStatus"
+
+  /auth/me:
+    get:
+      operationId: getAuthMe
+      tags: [auth]
+      summary: Get current auth status
+      responses:
+        "200":
+          description: Auth status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthStatus"
+
+  /shows:
+    get:
+      operationId: listShows
+      tags: [shows]
+      summary: List all shows
+      responses:
+        "200":
+          description: List of shows
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Show"
+    post:
+      operationId: createShow
+      tags: [shows]
+      summary: Create a show (admin only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateShowBody"
+      responses:
+        "201":
+          description: Show created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Show"
+        "401":
+          description: Unauthorized
+
+  /shows/{id}:
+    patch:
+      operationId: updateShow
+      tags: [shows]
+      summary: Update a show (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateShowBody"
+      responses:
+        "200":
+          description: Show updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Show"
+        "401":
+          description: Unauthorized
+        "404":
+          description: Show not found
+    delete:
+      operationId: deleteShow
+      tags: [shows]
+      summary: Delete a show (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+        "401":
+          description: Unauthorized
+        "404":
+          description: Show not found
+
+  /photos:
+    get:
+      operationId: listPhotos
+      tags: [photos]
+      summary: List all photos
+      responses:
+        "200":
+          description: List of photos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Photo"
+    post:
+      operationId: createPhoto
+      tags: [photos]
+      summary: Add a photo (admin only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePhotoBody"
+      responses:
+        "201":
+          description: Photo created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Photo"
+        "401":
+          description: Unauthorized
+
+  /photos/{id}:
+    patch:
+      operationId: updatePhoto
+      tags: [photos]
+      summary: Update a photo (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdatePhotoBody"
+      responses:
+        "200":
+          description: Photo updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Photo"
+        "401":
+          description: Unauthorized
+        "404":
+          description: Photo not found
+    delete:
+      operationId: deletePhoto
+      tags: [photos]
+      summary: Delete a photo (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+        "401":
+          description: Unauthorized
+        "404":
+          description: Photo not found
+
+  /videos:
+    get:
+      operationId: listVideos
+      tags: [videos]
+      summary: List all videos
+      responses:
+        "200":
+          description: List of videos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Video"
+    post:
+      operationId: createVideo
+      tags: [videos]
+      summary: Add a video (admin only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateVideoBody"
+      responses:
+        "201":
+          description: Video created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Video"
+        "401":
+          description: Unauthorized
+
+  /videos/{id}:
+    patch:
+      operationId: updateVideo
+      tags: [videos]
+      summary: Update a video (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateVideoBody"
+      responses:
+        "200":
+          description: Video updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Video"
+        "401":
+          description: Unauthorized
+        "404":
+          description: Video not found
+    delete:
+      operationId: deleteVideo
+      tags: [videos]
+      summary: Delete a video (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+        "401":
+          description: Unauthorized
+        "404":
+          description: Video not found
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+
+    LoginBody:
+      type: object
+      properties:
+        password:
+          type: string
+      required:
+        - password
+
+    AuthStatus:
+      type: object
+      properties:
+        authenticated:
+          type: boolean
+      required:
+        - authenticated
+
+    Show:
+      type: object
+      properties:
+        id:
+          type: integer
+        place:
+          type: string
+        day:
+          type: string
+        time:
+          type: ["string", "null"]
+        available:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - place
+        - day
+        - time
+        - available
+        - createdAt
+
+    CreateShowBody:
+      type: object
+      properties:
+        place:
+          type: string
+        day:
+          type: string
+        time:
+          type: ["string", "null"]
+        available:
+          type: boolean
+      required:
+        - place
+        - day
+
+    UpdateShowBody:
+      type: object
+      properties:
+        place:
+          type: string
+        day:
+          type: string
+        time:
+          type: ["string", "null"]
+        available:
+          type: boolean
+
+    Photo:
+      type: object
+      properties:
+        id:
+          type: integer
+        url:
+          type: string
+        title:
+          type: string
+        titleEn:
+          type: ["string", "null"]
+        sortOrder:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - url
+        - title
+        - titleEn
+        - sortOrder
+        - createdAt
+
+    CreatePhotoBody:
+      type: object
+      properties:
+        url:
+          type: string
+        title:
+          type: string
+        titleEn:
+          type: ["string", "null"]
+        sortOrder:
+          type: integer
+      required:
+        - url
+        - title
+
+    UpdatePhotoBody:
+      type: object
+      properties:
+        url:
+          type: string
+        title:
+          type: string
+        titleEn:
+          type: ["string", "null"]
+        sortOrder:
+          type: integer
+
+    Video:
+      type: object
+      properties:
+        id:
+          type: integer
+        url:
+          type: string
+        title:
+          type: string
+        titleEn:
+          type: ["string", "null"]
+        sortOrder:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - url
+        - title
+        - titleEn
+        - sortOrder
+        - createdAt
+
+    CreateVideoBody:
+      type: object
+      properties:
+        url:
+          type: string
+        title:
+          type: string
+        titleEn:
+          type: ["string", "null"]
+        sortOrder:
+          type: integer
+      required:
+        - url
+        - title
+
+    UpdateVideoBody:
+      type: object
+      properties:
+        url:
+          type: string
+        title:
+          type: string
+        titleEn:
+          type: ["string", "null"]
+        sortOrder:
+          type: integer
